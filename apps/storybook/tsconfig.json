@@ -1,0 +1,15 @@
+{
+  "extends": "./tsconfig.app.jsonc",
+  "compilerOptions": {
+    "moduleResolution": "bundler",
+    "baseUrl": ".",
+    "emitDeclarationOnly": true,
+    "paths": {
+      "@/": ["./"],
+      "@workspace/ui/": ["../../packages/ui/src/"]
+    },
+    "jsx": "react-jsx"
+  },
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules"]
+}
