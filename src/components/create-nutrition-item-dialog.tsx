@@ -158,32 +158,34 @@ function CreateNutritionItemDialog() {
             form.handleSubmit();
           }}
         >
-          <FieldGroup>
-            <form.Field
-              children={(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
+          <div className="no-scrollbar -mx-4 max-h-[50vh] overflow-x-auto overflow-y-auto px-4 pb-4">
+            <FieldGroup>
+              <form.Field
+                children={(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid;
 
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Barcode</FieldLabel>
-                    <BarcodeScanner
-                      aria-invalid={isInvalid}
-                      id={field.name}
-                      name={field.name}
-                      onBlur={field.handleBlur}
-                      onChange={(value) => field.handleChange(value)}
-                      value={field.state.value}
-                    />
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                  </Field>
-                );
-              }}
-              name="barcode"
-            />
-          </FieldGroup>
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>Barcode</FieldLabel>
+                      <BarcodeScanner
+                        aria-invalid={isInvalid}
+                        id={field.name}
+                        name={field.name}
+                        onBlur={field.handleBlur}
+                        onChange={(value) => field.handleChange(value)}
+                        value={field.state.value}
+                      />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+                  );
+                }}
+                name="barcode"
+              />
+            </FieldGroup>
+          </div>
           <DrawerFooter className="mt-4">
             <Button type="submit">Submit</Button>
           </DrawerFooter>

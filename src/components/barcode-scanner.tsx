@@ -3,14 +3,6 @@
 import { Html5QrcodeScanner, Html5QrcodeSupportedFormats } from "html5-qrcode";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Button } from "./ui/button";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "./ui/card";
 
 interface BarcodeScannerProps {
   "aria-invalid": boolean | undefined;
@@ -122,40 +114,39 @@ function BarcodeScanner(props: BarcodeScannerProps) {
   }, [readerId, restartToken, value]);
 
   return (
-    <Card aria-invalid={props["aria-invalid"]} id={id}>
-      <CardHeader>
-        <CardTitle>{value && <p>Barcode: {value}</p>}</CardTitle>
-        <CardAction>
-          <Button
-            onClick={() => {
-              lastDecodedRef.current = null;
-              onChangeRef.current?.("");
-              setRestartToken((current: number) => current + 1);
-            }}
-            size="sm"
-            variant="secondary"
-          >
-            Rescan
-          </Button>
-        </CardAction>
-      </CardHeader>
-
-      <CardContent>
-        {!value && <div className="scanner" id={readerId} />}
-      </CardContent>
-
-      <CardFooter>
-        {value ? (
+    <div aria-invalid={props["aria-invalid"]} id={id}>
+      {value && (
+        <div className="flex flex-col gap-4">
+          <div className="flex items-center justify-between">
+            <strong>{value}</strong>
+            <Button
+              aria-label="Clear scanned barcode and scan again"
+              onClick={() => {
+                lastDecodedRef.current = null;
+                onChangeRef.current?.("");
+                setRestartToken((current: number) => current + 1);
+              }}
+              size="sm"
+              variant="secondary"
+            >
+              Rescan
+            </Button>
+          </div>
           <p className="text-muted-foreground text-sm">
-            Please confirm that the scanned barcode is correct.
+            Verify barcode and rescan if incorrect.
           </p>
-        ) : (
+        </div>
+      )}
+
+      {!value && (
+        <>
+          <div aria-live="polite" className="scanner" id={readerId} />
           <p className="text-muted-foreground text-sm">
             Access to your camera is requested to scan barcodes.
           </p>
-        )}
-      </CardFooter>
-    </Card>
+        </>
+      )}
+    </div>
   );
 }
 
