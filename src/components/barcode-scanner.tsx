@@ -74,7 +74,7 @@ function BarcodeScanner(props: BarcodeScannerProps) {
           fps: 10,
           qrbox: 250,
           formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
-          aspectRatio: 1.333_334,
+          aspectRatio: 1.777_777_778,
         },
         true
       );
@@ -140,12 +140,14 @@ function BarcodeScanner(props: BarcodeScannerProps) {
       )}
 
       {!value && (
-        <>
-          <div aria-live="polite" className="scanner" id={readerId} />
+        <div className="flex flex-col items-center justify-center">
+          <div className="w-60">
+            <div aria-live="polite" className="scanner" id={readerId} />
+          </div>
           <p className="text-muted-foreground text-sm">
             Access to your camera is requested to scan barcodes.
           </p>
-        </>
+        </div>
       )}
     </div>
   );
