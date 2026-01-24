@@ -74,6 +74,9 @@ function BarcodeScanner(props: BarcodeScannerProps) {
           fps: 10,
           qrbox: 250,
           formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
+          videoConstraints: {
+            aspectRatio: 4 / 3,
+          },
         },
         true
       );
