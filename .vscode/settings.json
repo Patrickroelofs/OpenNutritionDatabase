@@ -29,5 +29,10 @@
     "source.fixAll.biome": "explicit",
     "source.organizeImports.biome": "explicit"
   },
-  "tailwindCSS.classFunctions": ["cva", "cx"]
+  "tailwindCSS.classFunctions": [
+    "cva",
+    "cx"
+  ],
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "emmet.showExpandedAbbreviation": "never",
 }
