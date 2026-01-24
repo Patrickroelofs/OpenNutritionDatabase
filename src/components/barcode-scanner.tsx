@@ -76,6 +76,7 @@ function BarcodeScanner(props: BarcodeScannerProps) {
           formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
           videoConstraints: {
             aspectRatio: 4 / 3,
+            facingMode: "environment",
           },
         },
         true
@@ -143,7 +144,12 @@ function BarcodeScanner(props: BarcodeScannerProps) {
 
       {!value && (
         <>
-          <div aria-live="polite" className="scanner" id={readerId} />
+          <div
+            aria-live="polite"
+            className="scanner"
+            id={readerId}
+            style={{ aspectRatio: "4 / 3" }}
+          />
           <p className="text-muted-foreground text-sm">
             Access to your camera is requested to scan barcodes.
           </p>
