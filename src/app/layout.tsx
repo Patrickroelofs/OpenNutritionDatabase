@@ -1,5 +1,7 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
+import { AppSidebar } from "@/components/app-header";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { ReactQueryClientProvider } from "@/providers/queryClientProvider";
 import { ThemeProvider } from "@/providers/themeProvider";
 
@@ -19,7 +21,12 @@ export default function RootLayout({
           disableTransitionOnChange
           enableSystem
         >
-          <ReactQueryClientProvider>{children}</ReactQueryClientProvider>
+          <ReactQueryClientProvider>
+            <SidebarProvider>
+              <AppSidebar />
+              <SidebarInset>{children}</SidebarInset>
+            </SidebarProvider>
+          </ReactQueryClientProvider>
         </ThemeProvider>
       </body>
     </html>

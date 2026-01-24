@@ -118,7 +118,7 @@ function BarcodeScanner(props: BarcodeScannerProps) {
   }, [readerId, restartToken, value]);
 
   return (
-    <div aria-invalid={props["aria-invalid"]} id={id}>
+    <div aria-invalid={props["aria-invalid"]} className="max-w-lg" id={id}>
       {value && (
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">

@@ -1,13 +1,15 @@
 import Main from "@/components/app.main";
 import DashboardHeader from "@/components/app-breadcrumbs";
-import { TableComponent } from "@/components/table";
+import CreateNewForm from "@/forms/create-new-form";
 
 export default function Page() {
   return (
     <>
-      <DashboardHeader items={[{ label: "View all", href: "/" }]} />
+      <DashboardHeader
+        items={[{ label: "Create new nutrition item", href: "/create" }]}
+      />
       <Main>
-        <TableComponent />
+        <CreateNewForm />
       </Main>
     </>
   );
