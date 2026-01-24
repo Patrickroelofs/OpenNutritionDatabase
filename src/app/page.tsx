@@ -1,4 +1,5 @@
 import { AppSidebar } from "@/components/app-sidebar";
+import CreateNutritionItemDialog from "@/components/create-nutrition-item-dialog";
 import { TableComponent } from "@/components/table";
 import {
   Breadcrumb,
@@ -19,7 +20,7 @@ export default function Page() {
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
+        <header className="flex h-16 shrink-0 items-center justify-between gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger />
             <Breadcrumb>
@@ -33,6 +34,9 @@ export default function Page() {
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
+          </div>
+          <div className="px-4">
+            <CreateNutritionItemDialog />
           </div>
         </header>
         <main className="p-4">

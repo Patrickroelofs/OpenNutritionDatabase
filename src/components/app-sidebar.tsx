@@ -2,7 +2,6 @@
 
 import { BowlFoodIcon, DatabaseIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
-import CreateNutritionItemDialog from "./create-nutrition-item-dialog";
 import {
   Sidebar,
   SidebarContent,
@@ -38,11 +37,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent className="flex flex-col gap-2">
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <CreateNutritionItemDialog />
-              </SidebarMenuItem>
-            </SidebarMenu>
             <SidebarMenu>
               <SidebarMenuItem>
                 <SidebarMenuButton
