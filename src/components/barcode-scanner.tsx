@@ -13,6 +13,7 @@ import {
 } from "./ui/card";
 
 interface BarcodeScannerProps {
+  "aria-invalid": boolean | undefined;
   id: string;
   name: string | undefined;
   onBlur: (() => void) | undefined;
@@ -114,7 +115,7 @@ function BarcodeScanner(props: BarcodeScannerProps) {
   }, [readerId, restartToken, value]);
 
   return (
-    <Card id={id}>
+    <Card aria-invalid={props["aria-invalid"]} id={id}>
       <CardHeader>
         <CardTitle>{value && <p>Barcode: {value}</p>}</CardTitle>
         <CardAction>

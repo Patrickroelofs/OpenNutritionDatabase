@@ -20,9 +20,12 @@ import { SidebarMenuButton } from "./ui/sidebar";
 const formSchema = z.object({
   title: z
     .string()
-    .min(5, "Bug title must be at least 5 characters.")
-    .max(32, "Bug title must be at most 32 characters."),
-  barcode: z.string().min(5, "Barcode must be at least 5 characters."),
+    .min(5, "Title must be at least 5 characters.")
+    .max(32, "Title must be at most 32 characters."),
+  barcode: z
+    .string()
+    .min(13, "Barcode must be at least 13 characters.")
+    .max(13, "Barcode must be at most 13 characters."),
 });
 
 function CreateNutritionItemDialog() {
@@ -60,48 +63,63 @@ function CreateNutritionItemDialog() {
             form.handleSubmit();
           }}
         >
-          <FieldGroup>
-            <form.Field
-              children={(field) => {
-                const isInvalid =
-                  field.state.meta.isTouched && !field.state.meta.isValid;
-                return (
-                  <Field data-invalid={isInvalid}>
-                    <FieldLabel htmlFor={field.name}>Product Title</FieldLabel>
-                    <Input
-                      aria-invalid={isInvalid}
-                      autoComplete="off"
-                      id={field.name}
-                      name={field.name}
-                      onBlur={field.handleBlur}
-                      onChange={(e) => field.handleChange(e.target.value)}
-                      placeholder="e.g. Organic Apple Juice"
-                      value={field.state.value}
-                    />
-                    {isInvalid && (
-                      <FieldError errors={field.state.meta.errors} />
-                    )}
-                  </Field>
-                );
-              }}
-              name="title"
-            />
+          <div className="no-scrollbar -mx-4 max-h-[50vh] overflow-x-auto overflow-y-auto px-4 pb-4">
+            <FieldGroup>
+              <form.Field
+                children={(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid;
 
-            <form.Field
-              children={(field) => {
-                return (
-                  <BarcodeScanner
-                    id={field.name}
-                    name={field.name}
-                    onBlur={field.handleBlur}
-                    onChange={field.handleChange}
-                    value={field.state.value}
-                  />
-                );
-              }}
-              name="barcode"
-            />
-          </FieldGroup>
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>
+                        Product Title
+                      </FieldLabel>
+                      <Input
+                        aria-invalid={isInvalid}
+                        autoComplete="off"
+                        id={field.name}
+                        name={field.name}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => field.handleChange(e.target.value)}
+                        placeholder="e.g. Organic Apple Juice"
+                        value={field.state.value}
+                      />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+                  );
+                }}
+                name="title"
+              />
+
+              <form.Field
+                children={(field) => {
+                  const isInvalid =
+                    field.state.meta.isTouched && !field.state.meta.isValid;
+
+                  return (
+                    <Field data-invalid={isInvalid}>
+                      <FieldLabel htmlFor={field.name}>Barcode</FieldLabel>
+                      <BarcodeScanner
+                        aria-invalid={isInvalid}
+                        id={field.name}
+                        name={field.name}
+                        onBlur={field.handleBlur}
+                        onChange={(value) => field.handleChange(value)}
+                        value={field.state.value}
+                      />
+                      {isInvalid && (
+                        <FieldError errors={field.state.meta.errors} />
+                      )}
+                    </Field>
+                  );
+                }}
+                name="barcode"
+              />
+            </FieldGroup>
+          </div>
           <DialogFooter className="mt-4">
             <Button type="submit">Submit</Button>
           </DialogFooter>
