@@ -145,3 +145,23 @@
     --sidebar-ring: oklch(0.439 0 0);
   }
 }
+
+.scanner {
+  border: none !important;
+
+  [alt="Info icon"] {
+    display: none !important;
+  }
+}
+
+#reader__scan_region {
+  min-height: auto !important;
+
+  > img[alt="Camera based scan"] {
+    display: none !important;
+  }
+
+  > img[alt="Fule based scan"] {
+    display: none !important;
+  }
+}

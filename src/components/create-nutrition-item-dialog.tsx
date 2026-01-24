@@ -1,8 +1,10 @@
+/** biome-ignore-all lint/correctness/noChildrenProp: Allowed in forms */
 "use client";
 
 import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
 import { useForm } from "@tanstack/react-form-nextjs";
 import z from "zod";
+import { BarcodeScanner } from "./barcode-scanner";
 import { Button } from "./ui/button";
 import {
   Dialog,
@@ -60,7 +62,6 @@ function CreateNutritionItemDialog() {
         >
           <FieldGroup>
             <form.Field
-              // biome-ignore lint/correctness/noChildrenProp: Allowed in forms
               children={(field) => {
                 const isInvalid =
                   field.state.meta.isTouched && !field.state.meta.isValid;
@@ -84,6 +85,21 @@ function CreateNutritionItemDialog() {
                 );
               }}
               name="title"
+            />
+
+            <form.Field
+              children={(field) => {
+                return (
+                  <BarcodeScanner
+                    id={field.name}
+                    name={field.name}
+                    onBlur={field.handleBlur}
+                    onChange={field.handleChange}
+                    value={field.state.value}
+                  />
+                );
+              }}
+              name="barcode"
             />
           </FieldGroup>
           <DialogFooter className="mt-4">
