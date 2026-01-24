@@ -1,13 +1,12 @@
 "use client";
 
-import { BowlFoodIcon, DatabaseIcon } from "@phosphor-icons/react/dist/ssr";
+import { DatabaseIcon } from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import {
   Sidebar,
   SidebarContent,
   SidebarGroup,
   SidebarGroupContent,
-  SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
@@ -17,23 +16,6 @@ import {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
-      <SidebarHeader>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
-              render={
-                <Link href="/">
-                  <BowlFoodIcon className="size-5!" />
-                  <span className="font-semibold text-base">
-                    Open Nutrition DB
-                  </span>
-                </Link>
-              }
-            />
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
           <SidebarGroupContent className="flex flex-col gap-2">
