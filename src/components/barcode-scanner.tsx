@@ -76,7 +76,9 @@ function BarcodeScanner(props: BarcodeScannerProps) {
           formatsToSupport: [Html5QrcodeSupportedFormats.EAN_13],
           aspectRatio: 1.777_777_778,
           videoConstraints: {
+            facingMode: "environment",
             aspectRatio: 1.777_777_778,
+            height: { ideal: 400 },
           },
         },
         true
