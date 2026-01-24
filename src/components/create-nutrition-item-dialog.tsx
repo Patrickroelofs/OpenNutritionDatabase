@@ -3,7 +3,10 @@
 
 import { PlusIcon } from "@phosphor-icons/react/dist/ssr";
 import { useForm } from "@tanstack/react-form-nextjs";
+import { useMutation } from "@tanstack/react-query";
+import React from "react";
 import z from "zod";
+import { queryClient } from "@/providers/queryClientProvider";
 import { BarcodeScanner } from "./barcode-scanner";
 import { Button } from "./ui/button";
 import {
@@ -23,6 +26,8 @@ const formSchema = z.object({
 });
 
 function CreateNutritionItemDialog() {
+  const [open, setOpen] = React.useState(false);
+
   const form = useForm({
     defaultValues: {
       barcode: "",
@@ -30,16 +35,46 @@ function CreateNutritionItemDialog() {
     validators: {
       onSubmit: formSchema,
     },
-    onSubmit: ({ value }) => {
-      console.log("Form submitted with value:", value);
+    onSubmit: async ({ value }) => {
+      await addBarcodeMutation.mutateAsync(value.barcode);
+    },
+  });
+
+  const addBarcodeMutation = useMutation({
+    mutationFn: async (barcode: string) => {
+      const response = await fetch("/api/barcodes", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify({ barcode }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to add barcode (HTTP ${response.status})`);
+      }
+
+      return response.json();
+    },
+    onSuccess: () => {
+      form.reset();
+      setOpen(false);
+      queryClient.invalidateQueries({ queryKey: ["nutrition-items"] });
+    },
+    onError: (error: unknown) => {
+      console.error(error);
     },
   });
 
   return (
-    <Dialog>
+    <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger
         render={
-          <Button className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground">
+          <Button
+            className="min-w-8 bg-primary text-primary-foreground duration-200 ease-linear hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground"
+            onClick={() => setOpen(true)}
+          >
             <PlusIcon />
             <span>Add a new item</span>
           </Button>

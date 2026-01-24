@@ -1,6 +1,6 @@
-import { integer, pgTable, serial } from "drizzle-orm/pg-core";
+import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
 
 export const barcodesTable = pgTable("barcodes", {
-  id: serial("id").primaryKey(),
-  barcode: integer("barcode").notNull().unique(),
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  barcode: varchar("barcode", { length: 13 }).notNull().unique(),
 });

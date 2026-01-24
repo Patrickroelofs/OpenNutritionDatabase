@@ -35,6 +35,7 @@ function BarcodeScanner(props: BarcodeScannerProps) {
   const onBlurRef = useRef<BarcodeScannerProps["onBlur"]>(onBlur);
 
   const pendingCleanupRef = useRef<Promise<void> | null>(null);
+  const readerElementRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     onChangeRef.current = onChange;
@@ -53,10 +54,16 @@ function BarcodeScanner(props: BarcodeScannerProps) {
       scannerRef.current = null;
       lastDecodedRef.current = null;
 
-      document.getElementById(readerId)?.replaceChildren();
-
-      pendingCleanupRef.current =
-        activeScanner?.clear().catch(() => undefined) ?? Promise.resolve();
+      pendingCleanupRef.current = (async (): Promise<void> => {
+        try {
+          await activeScanner?.clear();
+        } catch {
+          // ignore cleanup errors
+        } finally {
+          // Only clear the container after the library has finished tearing down its DOM.
+          readerElementRef.current?.replaceChildren();
+        }
+      })();
     };
 
     const startScanner = async (): Promise<void> => {

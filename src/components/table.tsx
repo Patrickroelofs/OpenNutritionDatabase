@@ -1,12 +1,12 @@
 "use client";
 
+import { useQuery } from "@tanstack/react-query";
 import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import React from "react";
 import {
   Table,
   TableBody,
@@ -16,39 +16,42 @@ import {
   TableRow,
 } from "./ui/table";
 
-interface NutritionalItem {
-  code: string;
-  name: string;
-  group: string;
+export interface NutritionalItem {
+  id: number;
+  barcode: string;
 }
-
-const defaultData: NutritionalItem[] = [
-  { code: "A01", name: "Apple", group: "Fruits" },
-  { code: "B02", name: "Banana", group: "Fruits" },
-  { code: "C03", name: "Carrot", group: "Vegetables" },
-  { code: "D04", name: "Broccoli", group: "Vegetables" },
-  { code: "E05", name: "Chicken", group: "Meat" },
-];
 
 const columnHelper = createColumnHelper<NutritionalItem>();
 
 const columns = [
-  columnHelper.accessor("code", {
-    header: "Code",
+  columnHelper.accessor("id", {
+    header: "ID",
     cell: (info) => info.getValue(),
   }),
-  columnHelper.accessor("name", {
-    header: "Name",
-    cell: (info) => info.getValue(),
-  }),
-  columnHelper.accessor("group", {
-    header: "Group",
+  columnHelper.accessor("barcode", {
+    header: "Barcode",
     cell: (info) => info.getValue(),
   }),
 ];
 
+const fetchBarcodes = async (): Promise<NutritionalItem[]> => {
+  const response = await fetch("/api/barcodes", {
+    method: "GET",
+    headers: { accept: "application/json" },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to load barcodes (HTTP ${response.status})`);
+  }
+
+  return response.json();
+};
+
 function TableComponent() {
-  const [data, _setData] = React.useState(() => [...defaultData]);
+  const { data = [] } = useQuery({
+    queryKey: ["nutrition-items"],
+    queryFn: fetchBarcodes,
+  });
 
   const table = useReactTable({
     data,
