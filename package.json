@@ -11,6 +11,7 @@
     "drizzle:studio": "drizzle-kit studio",
     "drizzle:push": "drizzle-kit push"
   },
+  "packageManager": "pnpm@10.28.1",
   "dependencies": {
     "@base-ui/react": "^1.1.0",
     "@phosphor-icons/react": "^2.1.10",
