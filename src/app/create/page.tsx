@@ -1,5 +1,5 @@
-import Main from "@/components/app.main";
 import DashboardHeader from "@/components/app-breadcrumbs";
+import Main from "@/components/app-main";
 import CreateNewForm from "@/forms/create-new-form";
 
 export default function Page() {
