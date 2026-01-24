@@ -1,9 +1,11 @@
 "use client";
 
 import { Html5QrcodeScanner, Html5QrcodeSupportedFormats } from "html5-qrcode";
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Button } from "./ui/button";
 import {
   Card,
+  CardAction,
   CardContent,
   CardFooter,
   CardHeader,
@@ -23,6 +25,8 @@ function BarcodeScanner(props: BarcodeScannerProps) {
 
   const readerId = useMemo(() => `${id}-reader`, [id]);
 
+  const [restartToken, setRestartToken] = useState<number>(0);
+
   const scannerRef = useRef<Html5QrcodeScanner | null>(null);
   const lastDecodedRef = useRef<string | null>(null);
 
@@ -39,10 +43,22 @@ function BarcodeScanner(props: BarcodeScannerProps) {
     onBlurRef.current = onBlur;
   }, [onBlur]);
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: restartToken is intentionally included
   useEffect(() => {
     let cancelled = false;
 
-    const start = async (): Promise<void> => {
+    const stopScanner = (): void => {
+      const activeScanner = scannerRef.current;
+      scannerRef.current = null;
+      lastDecodedRef.current = null;
+
+      document.getElementById(readerId)?.replaceChildren();
+
+      pendingCleanupRef.current =
+        activeScanner?.clear().catch(() => undefined) ?? Promise.resolve();
+    };
+
+    const startScanner = async (): Promise<void> => {
       // In dev StrictMode, the previous instance may still be cleaning up.
       await pendingCleanupRef.current;
 
@@ -81,39 +97,55 @@ function BarcodeScanner(props: BarcodeScannerProps) {
       );
     };
 
-    start();
+    if (value) {
+      stopScanner();
+
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    startScanner();
 
     return () => {
       cancelled = true;
-
-      const activeScanner = scannerRef.current;
-      scannerRef.current = null;
-      lastDecodedRef.current = null;
-
-      document.getElementById(readerId)?.replaceChildren();
-
-      pendingCleanupRef.current =
-        activeScanner?.clear().catch(() => undefined) ?? Promise.resolve();
+      stopScanner();
     };
-  }, [readerId]);
+  }, [readerId, restartToken, value]);
 
   return (
     <Card id={id}>
       <CardHeader>
-        <CardTitle>
-          {value && <p>Barcode: {value}</p>}
-          {!value && <p>No barcode scanned yet</p>}
-        </CardTitle>
+        <CardTitle>{value && <p>Barcode: {value}</p>}</CardTitle>
+        <CardAction>
+          <Button
+            onClick={() => {
+              lastDecodedRef.current = null;
+              onChangeRef.current?.("");
+              setRestartToken((current: number) => current + 1);
+            }}
+            size="sm"
+            variant="secondary"
+          >
+            Rescan
+          </Button>
+        </CardAction>
       </CardHeader>
 
       <CardContent>
-        <div className="scanner" id={readerId} />
+        {!value && <div className="scanner" id={readerId} />}
       </CardContent>
 
       <CardFooter>
-        <p className="text-muted-foreground text-sm">
-          Access to your camera is requested to scan barcodes.
-        </p>
+        {value ? (
+          <p className="text-muted-foreground text-sm">
+            Please confirm that the scanned barcode is correct.
+          </p>
+        ) : (
+          <p className="text-muted-foreground text-sm">
+            Access to your camera is requested to scan barcodes.
+          </p>
+        )}
       </CardFooter>
     </Card>
   );
