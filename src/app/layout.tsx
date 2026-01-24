@@ -1,6 +1,7 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { Providers } from "@/providers/queryClientProvider";
+import { ReactQueryClientProvider } from "@/providers/queryClientProvider";
+import { ThemeProvider } from "@/providers/themeProvider";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -10,9 +11,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className={inter.variable} lang="en">
+    <html className={inter.variable} lang="en" suppressHydrationWarning>
       <body>
-        <Providers>{children}</Providers>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          disableTransitionOnChange
+          enableSystem
+        >
+          <ReactQueryClientProvider>{children}</ReactQueryClientProvider>
+        </ThemeProvider>
       </body>
     </html>
   );
