@@ -4,6 +4,7 @@
 import { CheckIcon } from "@phosphor-icons/react/dist/ssr";
 import { useForm } from "@tanstack/react-form-nextjs";
 import { useMutation } from "@tanstack/react-query";
+import { redirect } from "next/navigation";
 import React from "react";
 import z from "zod";
 import { BarcodeScanner } from "@/components/barcode-scanner";
@@ -68,6 +69,7 @@ function CreateNewForm() {
     onSuccess: () => {
       form.reset();
       queryClient.invalidateQueries({ queryKey: ["nutrition-items"] });
+      redirect("/");
     },
     onError: (error: unknown) => {
       console.error(error);
