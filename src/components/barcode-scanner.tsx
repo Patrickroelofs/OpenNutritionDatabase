@@ -1,6 +1,7 @@
 "use client";
 
 import { BarcodeIcon } from "@phosphor-icons/react/dist/ssr";
+import type { IScannerControls } from "@zxing/browser";
 import {
   BarcodeFormat,
   BrowserMultiFormatReader,
@@ -31,7 +32,8 @@ function BarcodeScanner({
 }: BarcodeScannerProps) {
   const isMobile = useIsMobile();
   const videoRef = useRef<HTMLVideoElement | null>(null);
-  const controlsRef = useRef<unknown | null>(null);
+  // biome-ignore lint/suspicious/noConfusingVoidType: required to match IScannerControls | null
+  const controlsRef = useRef<IScannerControls | void | null>(null);
   const codeReader = useRef<BrowserMultiFormatReader>(
     new BrowserMultiFormatReader()
   );
