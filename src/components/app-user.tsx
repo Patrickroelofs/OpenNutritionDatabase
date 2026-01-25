@@ -2,13 +2,12 @@
 
 import { CaretDownIcon } from "@phosphor-icons/react/dist/ssr";
 import { signOut, useSession } from "@/lib/auth-client";
-import { Avatar, AvatarFallback } from "./ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
 import {
@@ -37,12 +36,22 @@ export function NavUser() {
                 size="lg"
               >
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarFallback className="rounded-lg">PR</AvatarFallback>
+                  {session.data.user.image && (
+                    <AvatarImage
+                      alt={session.data.user.name}
+                      src={session.data.user.image}
+                    />
+                  )}
+                  <AvatarFallback className="rounded-lg">
+                    {session.data.user.name.charAt(0)}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">Patrick Roelofs</span>
+                  <span className="truncate font-medium">
+                    {session.data.user.name}
+                  </span>
                   <span className="truncate text-xs">
-                    contact@patrickroelofs.com
+                    {session.data.user.email}
                   </span>
                 </div>
                 <CaretDownIcon className="ml-auto size-4" />
@@ -55,10 +64,6 @@ export function NavUser() {
             sideOffset={4}
           >
             <DropdownMenuGroup>
-              <DropdownMenuGroup>
-                <DropdownMenuItem>Account</DropdownMenuItem>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => signOut()} variant="destructive">
                 Sign out
               </DropdownMenuItem>
