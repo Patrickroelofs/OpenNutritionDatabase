@@ -22,6 +22,7 @@
     "@tanstack/react-table": "^8.21.3",
     "@zxing/browser": "^0.1.5",
     "@zxing/library": "^0.21.3",
+    "better-auth": "^1.4.17",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "dotenv": "^17.2.3",
