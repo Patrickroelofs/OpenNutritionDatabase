@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/correctness/noChildrenProp: Allowed as part of form element */
 "use client";
 
-import { BarcodeIcon, CheckIcon, XIcon } from "@phosphor-icons/react/dist/ssr";
+import { CheckIcon } from "@phosphor-icons/react/dist/ssr";
 import { useForm } from "@tanstack/react-form-nextjs";
 import { useMutation } from "@tanstack/react-query";
 import React from "react";
@@ -103,7 +103,7 @@ function CreateNewForm() {
                       Scan or enter the 13-digit EAN barcode of the nutrition
                       item.
                     </FieldDescription>
-                    <div className="flex max-w-md flex-row gap-4">
+                    <div className="flex max-w-md flex-col gap-4 md:flex-row">
                       <Input
                         aria-invalid={isInvalid}
                         id={field.name}
@@ -113,35 +113,20 @@ function CreateNewForm() {
                         placeholder="Enter barcode"
                         value={field.state.value}
                       />
-                      <Button
-                        onClick={() => setShowScanner(!showScanner)}
-                        type="button"
-                        variant="outline"
-                      >
-                        {showScanner ? (
-                          <>
-                            <XIcon />
-                            Close Scanner
-                          </>
-                        ) : (
-                          <>
-                            <BarcodeIcon />
-                            Use Scanner
-                          </>
-                        )}
-                      </Button>
-                    </div>
-
-                    {showScanner && (
                       <BarcodeScanner
                         aria-invalid={isInvalid}
                         id={field.name}
-                        name={field.name}
-                        onBlur={field.handleBlur}
-                        onChange={(value) => field.handleChange(value)}
-                        value={field.state.value}
+                        onError={(err) => {
+                          console.error("Barcode scan error:", err);
+                        }}
+                        onScan={(value) => {
+                          field.handleChange(value);
+                          setShowScanner(false);
+                        }}
+                        setShowScanner={setShowScanner}
+                        showScanner={showScanner}
                       />
-                    )}
+                    </div>
 
                     {isInvalid && (
                       <FieldError errors={field.state.meta.errors} />
