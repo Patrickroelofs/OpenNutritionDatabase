@@ -1,8 +1,19 @@
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import DashboardHeader from "@/components/app-breadcrumbs";
 import Main from "@/components/app-main";
 import CreateNewForm from "@/forms/create-new-form";
+import { auth } from "@/lib/auth";
 
-export default function Page() {
+export default async function Page() {
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    redirect("/");
+  }
+
   return (
     <>
       <DashboardHeader

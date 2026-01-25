@@ -79,21 +79,23 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarHeader>
       )}
       <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Actions</SidebarGroupLabel>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                render={
-                  <Link href="/create" onClick={handleLinkPress}>
-                    <PlusIcon className="size-5!" />
-                    <span>Create new</span>
-                  </Link>
-                }
-              />
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroup>
+        {session.data && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Actions</SidebarGroupLabel>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  render={
+                    <Link href="/create" onClick={handleLinkPress}>
+                      <PlusIcon className="size-5!" />
+                      <span>Create new</span>
+                    </Link>
+                  }
+                />
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+        )}
 
         <SidebarGroup>
           <SidebarGroupLabel>Database</SidebarGroupLabel>
