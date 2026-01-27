@@ -17,8 +17,8 @@ export const GET = async (): Promise<Response> => {
   const response: NutritionalItem[] = rows.map((entry) => ({
     id: entry.id,
     barcode: entry.barcode,
-    title: entry.title,
-    description: entry.description,
+    title: entry.title || "",
+    description: entry.description || "",
   }));
 
   return Response.json(response);
