@@ -15,6 +15,13 @@
       "when": 1769369967091,
       "tag": "0001_windy_lilith",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1769547850172,
+      "tag": "0002_solid_mattie_franklin",
+      "breakpoints": true
     }
   ]
 }

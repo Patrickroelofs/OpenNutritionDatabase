@@ -19,6 +19,8 @@ import {
 export interface NutritionalItem {
   id: number;
   barcode: string;
+  title: string;
+  description: string;
 }
 
 const columnHelper = createColumnHelper<NutritionalItem>();
@@ -32,10 +34,18 @@ const columns = [
     header: "Barcode",
     cell: (info) => info.getValue(),
   }),
+  columnHelper.accessor("title", {
+    header: "Title",
+    cell: (info) => info.getValue(),
+  }),
+  columnHelper.accessor("description", {
+    header: "Description",
+    cell: (info) => info.getValue(),
+  }),
 ];
 
 const fetchBarcodes = async (): Promise<NutritionalItem[]> => {
-  const response = await fetch("/api/barcodes", {
+  const response = await fetch("/api/nutrition-item", {
     method: "GET",
     headers: { accept: "application/json" },
   });

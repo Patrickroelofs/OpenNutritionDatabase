@@ -25,6 +25,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { queryClient } from "@/providers/queryClientProvider";
 
 const formSchema = z.object({
@@ -32,6 +33,8 @@ const formSchema = z.object({
     .string()
     .min(13, "Barcode must be at least 13 characters.")
     .max(13, "Barcode must be at most 13 characters."),
+  title: z.string().min(1, "Title is required."),
+  description: z.string(),
 });
 
 function CreateNewForm() {
@@ -40,28 +43,44 @@ function CreateNewForm() {
   const form = useForm({
     defaultValues: {
       barcode: "",
+      title: "",
+      description: "",
     },
     validators: {
       onSubmit: formSchema,
     },
     onSubmit: async ({ value }) => {
-      await addBarcodeMutation.mutateAsync(value.barcode);
+      await createNutritionItemMutation.mutateAsync({
+        barcode: value.barcode,
+        title: value.title,
+        description: value.description,
+      });
     },
   });
 
-  const addBarcodeMutation = useMutation({
-    mutationFn: async (barcode: string) => {
-      const response = await fetch("/api/barcodes", {
+  const createNutritionItemMutation = useMutation({
+    mutationFn: async ({
+      barcode,
+      title,
+      description,
+    }: z.infer<typeof formSchema>) => {
+      const response = await fetch("/api/nutrition-item", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: JSON.stringify({ barcode }),
+        body: JSON.stringify({
+          barcode,
+          title,
+          description,
+        }),
       });
 
       if (!response.ok) {
-        throw new Error(`Failed to add barcode (HTTP ${response.status})`);
+        throw new Error(
+          `Failed to add nutrition item (HTTP ${response.status})`
+        );
       }
 
       return response.json();
@@ -86,6 +105,7 @@ function CreateNewForm() {
         </CardDescription>
       </CardHeader>
       <form
+        name="create-nutrition-item-form"
         onSubmit={(e) => {
           e.preventDefault();
           form.handleSubmit();
@@ -100,12 +120,70 @@ function CreateNewForm() {
 
                 return (
                   <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Title</FieldLabel>
+                    <FieldDescription>
+                      Enter the title of the nutrition item.
+                    </FieldDescription>
+                    <Input
+                      aria-invalid={isInvalid}
+                      id={field.name}
+                      name={field.name}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="Enter title"
+                      value={field.state.value}
+                    />
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                );
+              }}
+              name="title"
+            />
+
+            <form.Field
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid;
+
+                return (
+                  <Field data-invalid={isInvalid}>
+                    <FieldLabel htmlFor={field.name}>Description</FieldLabel>
+                    <FieldDescription>
+                      Optionally, enter a description for the nutrition item.
+                    </FieldDescription>
+                    <Textarea
+                      aria-invalid={isInvalid}
+                      id={field.name}
+                      name={field.name}
+                      onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="Enter description"
+                      value={field.state.value}
+                    />
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
+                  </Field>
+                );
+              }}
+              name="description"
+            />
+
+            <form.Field
+              children={(field) => {
+                const isInvalid =
+                  field.state.meta.isTouched && !field.state.meta.isValid;
+
+                return (
+                  <Field data-invalid={isInvalid}>
                     <FieldLabel htmlFor={field.name}>Barcode</FieldLabel>
                     <FieldDescription>
                       Scan or enter the 13-digit EAN barcode of the nutrition
                       item.
                     </FieldDescription>
-                    <div className="flex max-w-md flex-col gap-4 md:flex-row">
+                    <div className="flex flex-col gap-4 md:flex-row">
                       <Input
                         aria-invalid={isInvalid}
                         id={field.name}
@@ -141,10 +219,16 @@ function CreateNewForm() {
           </FieldGroup>
         </CardContent>
         <CardFooter className="mt-6">
-          <Button type="submit">
-            <CheckIcon />
-            Submit
-          </Button>
+          <form.Subscribe
+            selector={(state) => [state.canSubmit, state.isSubmitting] as const}
+          >
+            {([canSubmit, isSubmitting]) => (
+              <Button disabled={!canSubmit || isSubmitting} type="submit">
+                <CheckIcon />
+                Submit
+              </Button>
+            )}
+          </form.Subscribe>
         </CardFooter>
       </form>
     </Card>
