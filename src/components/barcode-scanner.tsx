@@ -12,8 +12,20 @@ import { useCallback, useEffect, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Button } from "./ui/button";
 import { Card, CardContent } from "./ui/card";
-import { Dialog, DialogContent, DialogTrigger } from "./ui/dialog";
-import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerTitle,
+  DrawerTrigger,
+} from "./ui/drawer";
 
 interface BarcodeScannerProps {
   id: string;
@@ -136,6 +148,9 @@ function BarcodeScanner({
           </Button>
         </DrawerTrigger>
         <DrawerContent>
+          <DrawerHeader>
+            <DrawerTitle>Scan Barcode</DrawerTitle>
+          </DrawerHeader>
           <Card className="max-w-lg">
             <CardContent className="flex items-center justify-center">
               <video
@@ -163,6 +178,9 @@ function BarcodeScanner({
         }
       />
       <DialogContent className="flex items-center justify-center">
+        <DialogHeader>
+          <DialogTitle>Scan Barcode</DialogTitle>
+        </DialogHeader>
         <video
           className="aspect-square h-64 w-64 rounded-2xl border-2 object-cover"
           id={id}
