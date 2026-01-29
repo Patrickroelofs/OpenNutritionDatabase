@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import type { NutritionalItem } from "@/components/table";
+import { protectedRoute } from "@/lib/withAuth";
 import { db } from "../../../../drizzle";
 import { barcodesTable, productsTable } from "../../../../drizzle/db/schema";
 
@@ -24,26 +25,28 @@ export const GET = async (): Promise<Response> => {
   return Response.json(response);
 };
 
-export const POST = async (request: Request): Promise<Response> => {
-  const { barcode, title, description } = await request.json();
+export const POST = protectedRoute(
+  async (request: Request): Promise<Response> => {
+    const { barcode, title, description } = await request.json();
 
-  const [result] = await db
-    .insert(barcodesTable)
-    .values({ barcode })
-    .returning();
+    const [result] = await db
+      .insert(barcodesTable)
+      .values({ barcode })
+      .returning();
 
-  await db.insert(productsTable).values({
-    barcodeId: result.id,
-    title,
-    description,
-  });
+    await db.insert(productsTable).values({
+      barcodeId: result.id,
+      title,
+      description,
+    });
 
-  if (!result) {
-    return new Response("Failed to add barcode", { status: 500 });
+    if (!result) {
+      return new Response("Failed to add barcode", { status: 500 });
+    }
+
+    return Response.json({
+      success: true,
+      message: "Barcode added successfully",
+    });
   }
-
-  return Response.json({
-    success: true,
-    message: "Barcode added successfully",
-  });
-};
+);
