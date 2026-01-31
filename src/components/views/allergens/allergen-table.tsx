@@ -74,7 +74,7 @@ export const AllergenTable = () => {
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
   const [pageSize, setPageSize] = useQueryState(
     "pageSize",
-    parseAsInteger.withDefault(10)
+    parseAsInteger.withDefault(15)
   );
 
   const { data } = useQuery({

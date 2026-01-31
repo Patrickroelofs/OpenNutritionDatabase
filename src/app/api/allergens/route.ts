@@ -12,7 +12,7 @@ export const GET = async (request: Request) => {
   const pageSizeParam = searchParams.get("pageSize");
 
   const DEFAULT_PAGE = 1;
-  const DEFAULT_PAGE_SIZE = 10;
+  const DEFAULT_PAGE_SIZE = 15;
 
   const page = pageParam ? Number(pageParam) : DEFAULT_PAGE;
   const pageSize = pageSizeParam ? Number(pageSizeParam) : DEFAULT_PAGE_SIZE;
