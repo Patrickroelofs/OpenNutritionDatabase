@@ -1,11 +1,11 @@
 import { db } from "../../../../drizzle";
 import {
-  allergens,
+  allergens_db,
   allergensInsertSchema,
 } from "../../../../drizzle/db/allergens.db";
 
 export const GET = async () => {
-  const allAllergens = await db.select().from(allergens);
+  const allAllergens = await db.select().from(allergens_db);
 
   return Response.json(allAllergens);
 };
@@ -20,7 +20,7 @@ export const POST = async (request: Request) => {
   }
 
   const [newAllergen] = await db
-    .insert(allergens)
+    .insert(allergens_db)
     .values({
       name: parsedData.data.name,
     })

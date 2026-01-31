@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../../../../drizzle";
-import { allergens } from "../../../../../drizzle/db/allergens.db";
+import { allergens_db } from "../../../../../drizzle/db/allergens.db";
 
 export const GET = async (
   _request: Request,
@@ -10,8 +10,8 @@ export const GET = async (
 
   const allergen = await db
     .select()
-    .from(allergens)
-    .where(eq(allergens.id, id));
+    .from(allergens_db)
+    .where(eq(allergens_db.id, id));
 
   const result = allergen[0] ?? null;
 
