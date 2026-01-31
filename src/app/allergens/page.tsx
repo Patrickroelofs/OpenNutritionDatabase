@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import AppLayout from "@/components/app-layout";
 import { Button } from "@/components/ui/button";
 import { AllergenStatCards } from "@/components/views/allergens/allergen-stat-cards";
@@ -26,7 +27,9 @@ export default async function Page() {
       />
       <AppLayout.Content>
         <AllergenStatCards allergensTotalCount={allergens.length} />
-        <AllergenTable />
+        <Suspense fallback={<div>Loading allergen table...</div>}>
+          <AllergenTable />
+        </Suspense>
       </AppLayout.Content>
     </AppLayout>
   );
