@@ -1,7 +1,7 @@
 import { pgEnum, pgTable, text, uuid, varchar } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { z } from "zod";
 import { timestampColumns, verificationStatusEnum } from "./common.db";
-
 export const allergens_db = pgTable("allergens", {
   id: uuid("id").primaryKey().defaultRandom(),
   name: varchar("name", { length: 255 }).notNull(),
@@ -24,8 +24,15 @@ export const userAllergenSeverity_db = pgTable("user_allergen_severity", {
   ...timestampColumns,
 });
 
-export const allergensSchema = createSelectSchema(allergens_db);
+const dateField = z.union([z.iso.datetime({ offset: true }), z.date()]);
+
+export const allergensSchema = createSelectSchema(allergens_db).extend({
+  createdAt: dateField,
+  updatedAt: dateField,
+});
+
 export const allergensInsertSchema = createInsertSchema(allergens_db);
+
 export const userAllergenSeveritySchema = createSelectSchema(
   userAllergenSeverity_db
 );

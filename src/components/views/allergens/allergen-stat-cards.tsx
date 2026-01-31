@@ -1,4 +1,7 @@
+"use client";
+
 import { SmileyNervousIcon } from "@phosphor-icons/react/ssr";
+import { useQuery } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
@@ -6,17 +9,13 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { db } from "../../../../drizzle";
-import { allergens_db } from "../../../../drizzle/db/allergens.db";
+import { getAllAllergens } from "@/services/allergens-api";
 
-export const getAllAllergens = async () => {
-  const allergens = await db.select().from(allergens_db);
-
-  return allergens;
-};
-
-export const AllergenStatCards = async () => {
-  const allergens = await getAllAllergens();
+export const AllergenStatCards = () => {
+  const { data } = useQuery({
+    queryKey: ["allergens"],
+    queryFn: getAllAllergens,
+  });
 
   return (
     <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -31,7 +30,7 @@ export const AllergenStatCards = async () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="font-bold text-2xl">{allergens.length}</div>
+          <div className="font-bold text-2xl">{data?.length}</div>
         </CardContent>
       </Card>
     </div>
