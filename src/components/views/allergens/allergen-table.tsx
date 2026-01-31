@@ -1,19 +1,25 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import {
+  type ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 import type { VariantProps } from "class-variance-authority";
 import { parseAsInteger, useQueryState } from "nuqs";
+import { useMemo } from "react";
 import { Badge, type badgeVariants } from "@/components/ui/badge";
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -25,12 +31,54 @@ import {
 import { getAllAllergens } from "@/services/allergens-api";
 import type { Allergen } from "../../../../drizzle/db/allergens.db";
 
+const statusVariant = (
+  status: Allergen["status"]
+): VariantProps<typeof badgeVariants>["variant"] => {
+  switch (status) {
+    case "verified":
+      return "default";
+    case "pending":
+      return "secondary";
+    case "rejected":
+      return "destructive";
+    default:
+      return "default";
+  }
+};
+
+const columns: ColumnDef<Allergen>[] = [
+  {
+    accessorKey: "name",
+    header: "Name",
+  },
+  {
+    accessorKey: "description",
+    header: "Description",
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const status = row.original.status;
+
+      return (
+        <Badge variant={statusVariant(status)}>
+          {status.charAt(0).toUpperCase() + status.slice(1)}
+        </Badge>
+      );
+    },
+  },
+];
+
 export const AllergenTable = () => {
   const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
-  const [pageSize] = useQueryState("pageSize", parseAsInteger.withDefault(10));
+  const [pageSize, setPageSize] = useQueryState(
+    "pageSize",
+    parseAsInteger.withDefault(10)
+  );
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["allergens"],
+  const { data } = useQuery({
+    queryKey: ["allergens", page, pageSize],
     queryFn: () =>
       getAllAllergens({
         page,
@@ -38,92 +86,115 @@ export const AllergenTable = () => {
       }),
   });
 
-  const statusVariant = (
-    status: Allergen["status"]
-  ): VariantProps<typeof badgeVariants>["variant"] => {
-    switch (status) {
-      case "verified":
-        return "default";
-      case "pending":
-        return "secondary";
-      case "rejected":
-        return "destructive";
-      default:
-        return "default";
-    }
-  };
+  const defaultData = useMemo(() => [], []);
 
-  if (isLoading) {
-    return (
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-1/2">Name</TableHead>
-            <TableHead className="w-1/2">Status</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {[...new Array(10)].map((_, i) => (
-            // biome-ignore lint/suspicious/noArrayIndexKey: index is fine here since it's a static skeleton loader
-            <TableRow key={i}>
-              <TableCell>
-                <Skeleton className="h-5 w-20" />
-              </TableCell>
-              <TableCell>
-                <Skeleton className="h-5 w-40" />
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    );
-  }
+  const table = useReactTable({
+    data: data?.data || defaultData,
+    columns,
+    pageCount: data?.totalPages,
+    state: {
+      pagination: {
+        pageIndex: page - 1,
+        pageSize,
+      },
+    },
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    onPaginationChange: (updater) => {
+      const next =
+        typeof updater === "function"
+          ? updater(table.getState().pagination)
+          : updater;
+
+      setPage(next.pageIndex + 1);
+      setPageSize(next.pageSize);
+    },
+    manualPagination: true,
+  });
 
   return (
     <>
-      <Table>
+      <Table className="w-full table-fixed">
         <TableHeader>
-          <TableRow>
-            <TableHead className="w-1/2">Name</TableHead>
-            <TableHead className="w-1/2">Status</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data?.data?.map((allergen) => (
-            <TableRow key={allergen.id}>
-              <TableCell>{allergen.name}</TableCell>
-              <TableCell>
-                <Badge variant={statusVariant(allergen.status)}>
-                  {allergen.status}
-                </Badge>
-              </TableCell>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <TableRow key={headerGroup.id}>
+              {headerGroup.headers.map((header) => {
+                return (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                );
+              })}
             </TableRow>
           ))}
+        </TableHeader>
+        <TableBody>
+          {table.getRowModel().rows?.length ? (
+            table.getRowModel().rows.map((row) => (
+              <TableRow
+                data-state={row.getIsSelected() && "selected"}
+                key={row.id}
+              >
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : (
+            <TableRow>
+              <TableCell className="h-24 text-center" colSpan={columns.length}>
+                No results.
+              </TableCell>
+            </TableRow>
+          )}
         </TableBody>
       </Table>
 
-      <Pagination>
+      <Pagination className="mt-4">
         <PaginationContent>
-          <PaginationItem>
-            <PaginationPrevious onClick={() => setPage((prev) => prev - 1)} />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">1</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#" isActive>
-              2
-            </PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationLink href="#">3</PaginationLink>
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationEllipsis />
-          </PaginationItem>
-          <PaginationItem>
-            <PaginationNext onClick={() => setPage((prev) => prev + 1)} />
-          </PaginationItem>
+          {table.getCanPreviousPage() && (
+            <PaginationItem>
+              <PaginationPrevious
+                aria-label="Previous page"
+                onClick={() => table.previousPage()}
+                type="button"
+              >
+                Previous
+              </PaginationPrevious>
+            </PaginationItem>
+          )}
+
+          {Array.from({ length: table.getPageCount() }, (_, idx) => {
+            const pageNum = idx + 1;
+            return (
+              <PaginationItem key={pageNum}>
+                <PaginationLink
+                  isActive={
+                    pageNum === table.getState().pagination.pageIndex + 1
+                  }
+                  onClick={() => table.setPageIndex(idx)}
+                  type="button"
+                >
+                  {pageNum}
+                </PaginationLink>
+              </PaginationItem>
+            );
+          })}
+
+          {table.getCanNextPage() && (
+            <PaginationItem>
+              <PaginationNext onClick={() => table.nextPage()} type="button">
+                Next
+              </PaginationNext>
+            </PaginationItem>
+          )}
         </PaginationContent>
       </Pagination>
     </>

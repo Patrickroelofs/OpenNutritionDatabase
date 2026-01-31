@@ -9,7 +9,8 @@
     "lint": "biome check",
     "format": "biome format --write",
     "drizzle:studio": "drizzle-kit studio",
-    "drizzle:push": "drizzle-kit push"
+    "drizzle:push": "drizzle-kit push",
+    "seed": "pnpm exec tsx ./seed/index.ts"
   },
   "packageManager": "pnpm@10.28.1",
   "dependencies": {

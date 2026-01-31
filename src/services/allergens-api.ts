@@ -23,6 +23,7 @@ export const getAllAllergens = async ({
     page: number;
     pageSize: number;
     total: number;
+    totalPages: number;
     data: Allergen[];
   };
 };
