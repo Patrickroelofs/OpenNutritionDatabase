@@ -5,9 +5,9 @@ import { allergens_db } from "../../../../../drizzle/db/allergens.db";
 
 export const GET = async (
   _request: NextRequest,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ): Promise<Response> => {
-  const { id } = params;
+  const { id } = await context.params;
 
   const allergen = await db
     .select()
