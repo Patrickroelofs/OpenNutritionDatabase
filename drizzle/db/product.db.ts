@@ -1,6 +1,6 @@
 import { pgTable, primaryKey, uuid, varchar } from "drizzle-orm/pg-core";
-import { allergens } from "./allergens";
-import { createdByColumn, timestampColumns } from "./common";
+import { allergens } from "./allergens.db";
+import { createdByColumn, timestampColumns } from "./common.db";
 
 // Products
 export const products = pgTable("products", {

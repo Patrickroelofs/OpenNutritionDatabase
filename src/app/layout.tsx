@@ -1,6 +1,6 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
-import { AppSidebar } from "@/components/app-header";
+import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { ReactQueryClientProvider } from "@/providers/queryClientProvider";
 import { ThemeProvider } from "@/providers/themeProvider";

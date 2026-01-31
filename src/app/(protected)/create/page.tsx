@@ -1,5 +1,5 @@
 import DashboardHeader from "@/components/app-breadcrumbs";
-import Main from "@/components/app-main";
+import Main from "@/components/app-layout";
 import CreateNewForm from "@/forms/create-new-form";
 
 export default async function Page() {

@@ -1,6 +1,6 @@
 import { pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { user } from "./auth";
-import { entityTypeEnum, verificationStatusEnum } from "./common";
+import { user } from "./auth.db";
+import { entityTypeEnum, verificationStatusEnum } from "./common.db";
 
 export const verifications = pgTable("verifications", {
   id: uuid("id").primaryKey().defaultRandom(),

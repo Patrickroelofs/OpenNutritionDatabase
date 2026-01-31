@@ -1,5 +1,5 @@
 import { pgEnum, text, timestamp } from "drizzle-orm/pg-core";
-import { user } from "./auth";
+import { user } from "./auth.db";
 
 export const entityTypeEnum = pgEnum("entity_type", ["product", "allergen"]);
 

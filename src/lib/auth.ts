@@ -2,7 +2,7 @@ import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { db } from "../../drizzle";
 // biome-ignore lint/performance/noNamespaceImport: required as auth-schema may have many exports
-import * as schema from "../../drizzle/db/auth";
+import * as schema from "../../drizzle/db/auth.db";
 
 export const auth = betterAuth({
   database: drizzleAdapter(db, {

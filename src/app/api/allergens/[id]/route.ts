@@ -1,6 +1,6 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../../../../drizzle";
-import { allergens } from "../../../../../drizzle/db/allergens";
+import { allergens } from "../../../../../drizzle/db/allergens.db";
 
 export const GET = async (
   _request: Request,

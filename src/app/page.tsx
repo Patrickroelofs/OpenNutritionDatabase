@@ -1,11 +1,5 @@
-import DashboardHeader from "@/components/app-breadcrumbs";
-import Main from "@/components/app-main";
+import AppLayout from "@/components/app-layout";
 
 export default function Page() {
-  return (
-    <>
-      <DashboardHeader items={[{ label: "View all", href: "/" }]} />
-      <Main />
-    </>
-  );
+  return <AppLayout />;
 }

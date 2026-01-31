@@ -1,6 +1,9 @@
 "use client";
 
-import { DatabaseIcon } from "@phosphor-icons/react/dist/ssr";
+import {
+  DatabaseIcon,
+  SmileyNervousIcon,
+} from "@phosphor-icons/react/dist/ssr";
 import Link from "next/link";
 import { useIsMobile } from "@/hooks/use-mobile";
 import {
@@ -35,6 +38,17 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <Link href="/" onClick={handleLinkPress}>
                   <DatabaseIcon className="size-5!" />
                   <span>View all</span>
+                </Link>
+              }
+            />
+          </SidebarMenuItem>
+
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              render={
+                <Link href="/allergens" onClick={handleLinkPress}>
+                  <SmileyNervousIcon className="size-5!" />
+                  <span>Allergens</span>
                 </Link>
               }
             />
