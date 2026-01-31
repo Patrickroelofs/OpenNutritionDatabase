@@ -31,6 +31,8 @@ export const allergensSchema = createSelectSchema(allergens_db).extend({
   updatedAt: dateField,
 });
 
+export type Allergen = z.infer<typeof allergensSchema>;
+
 export const allergensInsertSchema = createInsertSchema(allergens_db);
 
 export const userAllergenSeveritySchema = createSelectSchema(

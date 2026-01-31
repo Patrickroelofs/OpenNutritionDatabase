@@ -1,6 +1,8 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import type { VariantProps } from "class-variance-authority";
+import { Badge, type badgeVariants } from "@/components/ui/badge";
 import {
   Table,
   TableBody,
@@ -10,6 +12,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { getAllAllergens } from "@/services/allergens-api";
+import type { Allergen } from "../../../../drizzle/db/allergens.db";
 
 export const AllergenTable = () => {
   const { data } = useQuery({
@@ -17,12 +20,26 @@ export const AllergenTable = () => {
     queryFn: getAllAllergens,
   });
 
+  const statusVariant = (
+    status: Allergen["status"]
+  ): VariantProps<typeof badgeVariants>["variant"] => {
+    switch (status) {
+      case "verified":
+        return "default";
+      case "pending":
+        return "secondary";
+      case "rejected":
+        return "destructive";
+      default:
+        return "default";
+    }
+  };
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
           <TableHead>Name</TableHead>
-          <TableHead>Description</TableHead>
           <TableHead>Status</TableHead>
         </TableRow>
       </TableHeader>
@@ -30,8 +47,11 @@ export const AllergenTable = () => {
         {data?.map((allergen) => (
           <TableRow key={allergen.id}>
             <TableCell>{allergen.name}</TableCell>
-            <TableCell>{allergen.description}</TableCell>
-            <TableCell>{allergen.status}</TableCell>
+            <TableCell>
+              <Badge variant={statusVariant(allergen.status)}>
+                {allergen.status}
+              </Badge>
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
