@@ -1,5 +1,5 @@
 import { pgTable, primaryKey, uuid, varchar } from "drizzle-orm/pg-core";
-import { allergens } from "./allergens.db";
+import { allergens_db } from "./allergens.db";
 import { createdByColumn, timestampColumns } from "./common.db";
 
 // Products
@@ -23,7 +23,7 @@ export const productAllergens = pgTable(
       }),
     allergenId: uuid("allergen_id")
       .notNull()
-      .references(() => allergens.id, {
+      .references(() => allergens_db.id, {
         onDelete: "cascade",
       }),
   },
