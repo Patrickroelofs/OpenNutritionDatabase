@@ -1,10 +1,7 @@
 import { pgEnum, text, timestamp } from "drizzle-orm/pg-core";
 import { user } from "./auth";
 
-export const entityTypeEnum = pgEnum("entity_type", [
-  "product",
-  "allergen",
-]);
+export const entityTypeEnum = pgEnum("entity_type", ["product", "allergen"]);
 
 export const verificationStatusEnum = pgEnum("verification_status", [
   "pending",
@@ -18,5 +15,7 @@ export const timestampColumns = {
 };
 
 export const createdByColumn = {
-  createdBy: text("created_by").references(() => user.id, {onDelete: "set null"}),
+  createdBy: text("created_by").references(() => user.id, {
+    onDelete: "set null",
+  }),
 };
