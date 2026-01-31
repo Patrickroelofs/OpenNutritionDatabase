@@ -51,6 +51,7 @@ export const POST = async (request: Request) => {
   const data = await request.json();
 
   const parsedData = allergensInsertSchema.safeParse(data);
+  console.log(parsedData);
 
   if (!parsedData.success) {
     return new Response("Invalid allergen data", { status: 400 });
@@ -60,6 +61,7 @@ export const POST = async (request: Request) => {
     .insert(allergens_db)
     .values({
       name: parsedData.data.name,
+      description: parsedData.data.description,
     })
     .returning();
 

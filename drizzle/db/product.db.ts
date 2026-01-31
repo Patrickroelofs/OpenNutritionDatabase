@@ -1,5 +1,4 @@
-import { pgTable, primaryKey, uuid, varchar } from "drizzle-orm/pg-core";
-import { allergens_db } from "./allergens.db";
+import { pgTable, uuid, varchar } from "drizzle-orm/pg-core";
 import { createdByColumn, timestampColumns } from "./common.db";
 
 // Products
@@ -11,21 +10,3 @@ export const products = pgTable("products", {
   ...timestampColumns,
   ...createdByColumn,
 });
-
-// Product Allergens (Many-to-Many relationship)
-export const productAllergens = pgTable(
-  "product_allergens",
-  {
-    productId: uuid("product_id")
-      .notNull()
-      .references(() => products.id, {
-        onDelete: "cascade",
-      }),
-    allergenId: uuid("allergen_id")
-      .notNull()
-      .references(() => allergens_db.id, {
-        onDelete: "cascade",
-      }),
-  },
-  (table) => [primaryKey({ columns: [table.productId, table.allergenId] })]
-);

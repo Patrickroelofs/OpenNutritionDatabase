@@ -17,14 +17,6 @@ export const allergenSeverityEnum = pgEnum("allergen_severity", [
   "high",
 ]);
 
-export const userAllergenSeverity_db = pgTable("user_allergen_severity", {
-  id: uuid("id").primaryKey().defaultRandom(),
-  userId: uuid("user_id").notNull(),
-  allergenId: uuid("allergen_id").notNull(),
-  severity: allergenSeverityEnum("severity").notNull(),
-  ...timestampColumns,
-});
-
 const dateField = z.union([z.iso.datetime({ offset: true }), z.date()]);
 
 export const allergensSchema = createSelectSchema(allergens_db).extend({
@@ -35,10 +27,3 @@ export const allergensSchema = createSelectSchema(allergens_db).extend({
 export type Allergen = z.infer<typeof allergensSchema>;
 
 export const allergensInsertSchema = createInsertSchema(allergens_db);
-
-export const userAllergenSeveritySchema = createSelectSchema(
-  userAllergenSeverity_db
-);
-export const userAllergenSeverityInsertSchema = createInsertSchema(
-  userAllergenSeverity_db
-);
