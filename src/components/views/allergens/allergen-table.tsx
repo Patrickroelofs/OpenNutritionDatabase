@@ -2,7 +2,17 @@
 
 import { useQuery } from "@tanstack/react-query";
 import type { VariantProps } from "class-variance-authority";
+import { parseAsInteger, useQueryState } from "nuqs";
 import { Badge, type badgeVariants } from "@/components/ui/badge";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
@@ -16,9 +26,16 @@ import { getAllAllergens } from "@/services/allergens-api";
 import type { Allergen } from "../../../../drizzle/db/allergens.db";
 
 export const AllergenTable = () => {
+  const [page, setPage] = useQueryState("page", parseAsInteger.withDefault(1));
+  const [pageSize] = useQueryState("pageSize", parseAsInteger.withDefault(10));
+
   const { data, isLoading } = useQuery({
     queryKey: ["allergens"],
-    queryFn: getAllAllergens,
+    queryFn: () =>
+      getAllAllergens({
+        page,
+        pageSize,
+      }),
   });
 
   const statusVariant = (
@@ -63,25 +80,52 @@ export const AllergenTable = () => {
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead className="w-1/2">Name</TableHead>
-          <TableHead className="w-1/2">Status</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {data?.map((allergen) => (
-          <TableRow key={allergen.id}>
-            <TableCell>{allergen.name}</TableCell>
-            <TableCell>
-              <Badge variant={statusVariant(allergen.status)}>
-                {allergen.status}
-              </Badge>
-            </TableCell>
+    <>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-1/2">Name</TableHead>
+            <TableHead className="w-1/2">Status</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {data?.data?.map((allergen) => (
+            <TableRow key={allergen.id}>
+              <TableCell>{allergen.name}</TableCell>
+              <TableCell>
+                <Badge variant={statusVariant(allergen.status)}>
+                  {allergen.status}
+                </Badge>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      <Pagination>
+        <PaginationContent>
+          <PaginationItem>
+            <PaginationPrevious onClick={() => setPage((prev) => prev - 1)} />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="#">1</PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="#" isActive>
+              2
+            </PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationLink href="#">3</PaginationLink>
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationEllipsis />
+          </PaginationItem>
+          <PaginationItem>
+            <PaginationNext onClick={() => setPage((prev) => prev + 1)} />
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
+    </>
   );
 };

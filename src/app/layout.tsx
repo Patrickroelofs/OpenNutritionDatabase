@@ -1,5 +1,6 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { ReactQueryClientProvider } from "@/providers/queryClientProvider";
@@ -22,10 +23,12 @@ export default function RootLayout({
           enableSystem
         >
           <ReactQueryClientProvider>
-            <SidebarProvider>
-              <AppSidebar />
-              <SidebarInset>{children}</SidebarInset>
-            </SidebarProvider>
+            <NuqsAdapter>
+              <SidebarProvider>
+                <AppSidebar />
+                <SidebarInset>{children}</SidebarInset>
+              </SidebarProvider>
+            </NuqsAdapter>
           </ReactQueryClientProvider>
         </ThemeProvider>
       </body>
