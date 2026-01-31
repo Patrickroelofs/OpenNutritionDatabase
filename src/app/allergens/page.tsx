@@ -3,12 +3,14 @@ import { Button } from "@/components/ui/button";
 import { AllergenStatCards } from "@/components/views/allergens/allergen-stat-cards";
 import { AllergenTable } from "@/components/views/allergens/allergen-table";
 import { queryClient } from "@/lib/query-client";
-import { getAllAllergens } from "@/services/allergens-api";
+import { db } from "../../../drizzle";
+import { allergens_db } from "../../../drizzle/db/allergens.db";
 
 export default async function Page() {
+  const allergens = await db.select().from(allergens_db);
   await queryClient.prefetchQuery({
     queryKey: ["allergens"],
-    queryFn: getAllAllergens,
+    queryFn: () => allergens,
   });
 
   return (
@@ -23,7 +25,7 @@ export default async function Page() {
         ]}
       />
       <AppLayout.Content>
-        <AllergenStatCards />
+        <AllergenStatCards allergensTotalCount={allergens.length} />
         <AllergenTable />
       </AppLayout.Content>
     </AppLayout>

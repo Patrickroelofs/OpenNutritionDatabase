@@ -3,6 +3,7 @@
 import { useQuery } from "@tanstack/react-query";
 import type { VariantProps } from "class-variance-authority";
 import { Badge, type badgeVariants } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableBody,
@@ -15,7 +16,7 @@ import { getAllAllergens } from "@/services/allergens-api";
 import type { Allergen } from "../../../../drizzle/db/allergens.db";
 
 export const AllergenTable = () => {
-  const { data } = useQuery({
+  const { data, isLoading } = useQuery({
     queryKey: ["allergens"],
     queryFn: getAllAllergens,
   });
@@ -35,12 +36,38 @@ export const AllergenTable = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead className="w-1/2">Name</TableHead>
+            <TableHead className="w-1/2">Status</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {[...new Array(10)].map((_, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: index is fine here since it's a static skeleton loader
+            <TableRow key={i}>
+              <TableCell>
+                <Skeleton className="h-5 w-20" />
+              </TableCell>
+              <TableCell>
+                <Skeleton className="h-5 w-40" />
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    );
+  }
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Name</TableHead>
-          <TableHead>Status</TableHead>
+          <TableHead className="w-1/2">Name</TableHead>
+          <TableHead className="w-1/2">Status</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>

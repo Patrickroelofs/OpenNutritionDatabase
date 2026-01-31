@@ -1,7 +1,6 @@
 "use client";
 
 import { SmileyNervousIcon } from "@phosphor-icons/react/ssr";
-import { useQuery } from "@tanstack/react-query";
 import {
   Card,
   CardContent,
@@ -9,14 +8,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { getAllAllergens } from "@/services/allergens-api";
 
-export const AllergenStatCards = () => {
-  const { data } = useQuery({
-    queryKey: ["allergens"],
-    queryFn: getAllAllergens,
-  });
-
+export const AllergenStatCards = ({
+  allergensTotalCount,
+}: {
+  allergensTotalCount: number;
+}) => {
   return (
     <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
       <Card>
@@ -30,7 +27,7 @@ export const AllergenStatCards = () => {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="font-bold text-2xl">{data?.length}</div>
+          <div className="font-bold text-2xl">{allergensTotalCount}</div>
         </CardContent>
       </Card>
     </div>
