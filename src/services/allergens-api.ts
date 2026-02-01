@@ -1,17 +1,7 @@
-import type { Allergen } from "../../drizzle/db/allergens.db";
+import type { AllergenWithRelations } from "@/components/views/allergens/allergen-table";
 
-interface GetAllAllergensParams {
-  page?: number;
-  pageSize?: number;
-}
-
-export const getAllAllergens = async ({
-  page = 1,
-  pageSize = 10,
-}: GetAllAllergensParams = {}) => {
-  const response = await fetch(
-    `/api/allergens?page=${page}&pageSize=${pageSize}`
-  );
+export const getAllAllergens = async () => {
+  const response = await fetch("/api/allergens");
 
   if (!response.ok) {
     throw new Error("Failed to fetch allergens");
@@ -19,11 +9,5 @@ export const getAllAllergens = async ({
 
   const data = await response.json();
 
-  return data as {
-    page: number;
-    pageSize: number;
-    total: number;
-    totalPages: number;
-    data: Allergen[];
-  };
+  return data as AllergenWithRelations[];
 };

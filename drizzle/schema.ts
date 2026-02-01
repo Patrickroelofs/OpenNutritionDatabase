@@ -1,6 +1,43 @@
 import { relations } from "drizzle-orm";
-import { boolean, index, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  type AnyPgColumn,
+  boolean,
+  index,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  varchar,
+} from "drizzle-orm/pg-core";
 
+/**
+ * Allergens table definition
+ */
+export const allergens_db = pgTable("allergens", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  parentId: uuid("parent_id").references((): AnyPgColumn => allergens_db.id, {
+    onDelete: "cascade",
+  }),
+
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+});
+
+export const allergensRelations = relations(allergens_db, ({ one, many }) => ({
+  parent: one(allergens_db, {
+    fields: [allergens_db.parentId],
+    references: [allergens_db.id],
+    relationName: "allergenHierarchy",
+  }),
+
+  children: many(allergens_db, {
+    relationName: "allergenHierarchy",
+  }),
+}));
+
+/**
+ * User table definition
+ */
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -91,3 +128,6 @@ export const accountRelations = relations(account, ({ one }) => ({
     references: [user.id],
   }),
 }));
+
+export type allergens_dbType = typeof allergens_db.$inferSelect;
+export type allergens_dbInsertType = typeof allergens_db.$inferInsert;

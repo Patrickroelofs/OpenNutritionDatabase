@@ -1,136 +1,175 @@
+import { and, eq, isNull } from "drizzle-orm";
+import type { drizzle } from "drizzle-orm/node-postgres";
 import { db } from "../drizzle";
-import {
-  allergens_db,
-  allergensInsertSchema,
-} from "../drizzle/db/allergens.db";
+import { allergens_db } from "../drizzle/schema";
 
-async function seedAllergens() {
-  const allergens = [
-    {
-      name: "Peanuts",
-      description: "A legume that is a common allergen.",
-      status: "pending",
-    },
-    {
-      name: "Tree nuts",
-      description: "Includes almonds, walnuts, cashews, etc.",
-      status: "pending",
-    },
-    {
-      name: "Milk",
-      description: "Dairy milk and products derived from it.",
-      status: "pending",
-    },
-    {
-      name: "Eggs",
-      description: "Chicken eggs and products containing eggs.",
-      status: "pending",
-    },
-    {
-      name: "Fish",
-      description: "All types of fish.",
-      status: "pending",
-    },
-    {
-      name: "Shellfish",
-      description: "Includes shrimp, crab, lobster, etc.",
-      status: "pending",
-    },
-    {
-      name: "Wheat",
-      description: "A cereal grain that is a common allergen.",
-      status: "pending",
-    },
-    {
-      name: "Soy",
-      description: "Soybeans and products derived from soy.",
-      status: "pending",
-    },
-    {
-      name: "Sesame",
-      description: "Sesame seeds and products containing sesame.",
-      status: "pending",
-    },
-    {
-      name: "Gluten",
-      description: "A protein found in wheat, barley, and rye.",
-      status: "pending",
-    },
-    {
-      name: "Sulfites",
-      description:
-        "Preservatives found in dried fruits, wines, and some processed foods.",
-      status: "pending",
-    },
-    {
-      name: "Mustard",
-      description: "A common ingredient in condiments and processed foods.",
-      status: "pending",
-    },
-    {
-      name: "Celery",
-      description:
-        "Includes celery stalks, leaves, seeds, and root (celeriac).",
-      status: "pending",
-    },
-    {
-      name: "Lupin",
-      description:
-        "Seeds and flour from the lupin plant, sometimes used in baked goods.",
-      status: "pending",
-    },
-    {
-      name: "Mollusks",
-      description: "Includes clams, mussels, oysters, scallops, and snails.",
-      status: "pending",
-    },
-    {
-      name: "Corn",
-      description: "Corn and products derived from corn.",
-      status: "pending",
-    },
-    {
-      name: "Buckwheat",
-      description: "A grain-like seed sometimes used in gluten-free foods.",
-      status: "pending",
-    },
-    {
-      name: "Poppy seeds",
-      description: "Seeds from the poppy plant, used in baked goods.",
-      status: "pending",
-    },
-    {
-      name: "Latex",
-      description: "Natural rubber latex, found in some foods and products.",
-      status: "pending",
-    },
-    {
-      name: "Legumes (other than peanuts/soy)",
-      description: "Includes lentils, peas, chickpeas, and beans.",
-      status: "pending",
-    },
-    {
-      name: "Nightshades",
-      description: "Includes tomatoes, potatoes, peppers, and eggplant.",
-      status: "pending",
-    },
-    {
-      name: "Mustard greens",
-      description: "Leafy greens from the mustard plant.",
-      status: "pending",
-    },
-  ];
-
-  const parsedAllergens = allergensInsertSchema.array().parse(allergens);
-
-  await db.insert(allergens_db).values(parsedAllergens);
-
-  console.log("Seeded allergens table.");
+interface AllergenSeed {
+  name: string;
+  description?: string;
+  children?: readonly AllergenSeed[];
 }
 
-seedAllergens()
-  .catch((err) => {
-    console.error("Error seeding allergens:", err);
-    process.exit(1);
-  })
-  .finally(() => process.exit(0));
+const seedData: readonly AllergenSeed[] = [
+  {
+    name: "Milk",
+    description:
+      "Dairy milk proteins (casein, whey). Common in cheese, yogurt, butter, and many processed foods.",
+  },
+  {
+    name: "Eggs",
+    description:
+      "Egg proteins, commonly found in baked goods, sauces, and some pasta.",
+  },
+  {
+    name: "Fish",
+    description:
+      "Finfish such as salmon, tuna, cod, and others. Often present in sauces and cross-contaminated oils.",
+    children: [
+      { name: "Salmon" },
+      { name: "Tuna" },
+      { name: "Cod" },
+      { name: "Halibut" },
+      { name: "Trout" },
+      { name: "Mackerel" },
+      { name: "Sardine" },
+    ],
+  },
+  {
+    name: "Shellfish",
+    description:
+      "Crustaceans and mollusks. Common in seafood dishes and some sauces.",
+    children: [
+      {
+        name: "Crustaceans",
+        children: [{ name: "Shrimp" }, { name: "Crab" }, { name: "Lobster" }],
+      },
+      {
+        name: "Mollusks",
+        children: [
+          { name: "Clam" },
+          { name: "Oyster" },
+          { name: "Scallop" },
+          { name: "Mussel" },
+          { name: "Squid" },
+        ],
+      },
+    ],
+  },
+  {
+    name: "Tree nuts",
+    description:
+      "Nuts grown on trees. Common in baked goods, nut butters, oils, and desserts.",
+    children: [
+      { name: "Almond" },
+      { name: "Brazil nut" },
+      { name: "Cashew" },
+      { name: "Hazelnut" },
+      { name: "Macadamia nut" },
+      { name: "Pecan" },
+      { name: "Pine nut" },
+      { name: "Pistachio" },
+      { name: "Walnut" },
+    ],
+  },
+  {
+    name: "Peanuts",
+    description:
+      "Legume commonly used in snacks and cooking; high cross-contact risk with tree nuts.",
+  },
+  {
+    name: "Wheat",
+    description:
+      "Contains gluten; common in breads, pasta, baked goods, and many processed foods.",
+  },
+  {
+    name: "Soy",
+    description:
+      "Soybeans and derivatives (tofu, soy sauce, soy lecithin). Common in processed foods.",
+  },
+  {
+    name: "Sesame",
+    description:
+      "Seeds and oil; commonly found in breads, dressings, tahini, and Middle Eastern cuisine.",
+  },
+  { name: "Celery" },
+  { name: "Mustard" },
+  { name: "Lupin" },
+  { name: "Sulphur dioxide and sulphites" },
+];
+
+const findAllergenId = async (
+  db: ReturnType<typeof drizzle>,
+  name: string,
+  parentId: string | null
+): Promise<string | null> => {
+  const rows = await db
+    .select({ id: allergens_db.id })
+    .from(allergens_db)
+    .where(
+      and(
+        eq(allergens_db.name, name),
+        parentId === null
+          ? isNull(allergens_db.parentId)
+          : eq(allergens_db.parentId, parentId)
+      )
+    )
+    .limit(1);
+
+  return rows[0]?.id ?? null;
+};
+
+const upsertAllergen = async (
+  db: ReturnType<typeof drizzle>,
+  name: string,
+  description: string | undefined,
+  parentId: string | null
+): Promise<string> => {
+  const existingId = await findAllergenId(db, name, parentId);
+  if (existingId) {
+    return existingId;
+  }
+
+  const inserted = await db
+    .insert(allergens_db)
+    .values({
+      name,
+      description: description ?? null,
+      parentId,
+    })
+    .returning({ id: allergens_db.id });
+
+  const id = inserted[0]?.id;
+  if (!id) {
+    throw new Error(`Failed to insert allergen: ${name}`);
+  }
+  return id;
+};
+
+const insertBranch = async (
+  db: ReturnType<typeof drizzle>,
+  node: AllergenSeed,
+  parentId: string | null
+): Promise<void> => {
+  const id = await upsertAllergen(db, node.name, node.description, parentId);
+  const children = node.children ?? [];
+  for (const child of children) {
+    // eslint-disable-next-line no-await-in-loop
+    await insertBranch(db, child, id);
+  }
+};
+
+const main = async (): Promise<void> => {
+  try {
+    for (const root of seedData) {
+      // eslint-disable-next-line no-await-in-loop
+      await insertBranch(db, root, null);
+    }
+  } catch (error: unknown) {
+    // Prefer throwing descriptive Error objects
+    const message =
+      error instanceof Error ? error.message : "Unknown error during seeding.";
+    throw new Error(message);
+  }
+};
+
+main();
