@@ -114,7 +114,7 @@ export const AllergenTable = () => {
 
   return (
     <>
-      <Table className="w-full table-fixed">
+      <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (
             <TableRow key={headerGroup.id}>
